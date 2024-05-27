@@ -1,9 +1,18 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.responses import HTMLResponse
 from  data_generator import generate_random_payload
+from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust this to your allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 html = """
 <!DOCTYPE html>
@@ -55,6 +64,7 @@ async def websocket_endpoint(websocket: WebSocket):
     while True:
         if deviceId=="":
             deviceId = await websocket.receive_text()
+        print(deviceId)
         await asyncio.sleep(2)
         await websocket.send_json(generate_random_payload(deviceId))
 
